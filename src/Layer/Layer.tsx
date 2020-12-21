@@ -26,6 +26,10 @@ const Layer: FunctionComponent<Props> = ({
 
   for (var x = leftCol; x * 256 < offsetX + width; x++) {
     for (var y = topRow; y * 256 < offsetY + height; y++) {
+      if (x < 0 || y < 0 || x >= 1 << zoom || y >= 1 << zoom) {
+        continue;
+      }
+
       tiles.push([
         256 * x - offsetX,
         256 * y - offsetY,
