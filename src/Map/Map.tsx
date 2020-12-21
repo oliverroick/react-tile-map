@@ -1,4 +1,4 @@
-import React, { ReactNode, FunctionComponent, createContext } from 'react';
+import React, { ReactNode, FunctionComponent, createContext, useState, useEffect } from 'react';
 
 interface Props {
   center?: [number, number];
@@ -24,16 +24,40 @@ export const MapContext = createContext<MapContextType>({
 
 const Map: FunctionComponent<Props> = ({
   center = [0, 0],
-  zoom,
+  zoom: initialZoom,
   width,
   height,
   children,
-}) => (
-  <MapContext.Provider value={{ center, zoom, height, width }}>
-    <div id="map" style={{ width, height, position: 'relative', overflow: 'hidden', border: '3px solid black'}}>
-      { children }
-    </div>
-  </MapContext.Provider>
-);
+}) => {
+  const [zoom, setZoom] = useState(initialZoom);
+
+  useEffect(() => {
+    setZoom(initialZoom);
+  }, [initialZoom]);
+
+  const handleZoom = (dir: number) => setZoom(dir + zoom);
+
+  return (
+    <MapContext.Provider value={{ center, zoom, height, width }}>
+      <div id="map" style={{ width, height, position: 'relative', overflow: 'hidden', border: '3px solid black'}}>
+        { children }
+      </div>
+      <div>
+        <button
+          onClick={() => handleZoom(+1)}
+          disabled={zoom >= 19}
+        >
+          +
+        </button>
+        <button
+          onClick={() => handleZoom(-1)}
+          disabled={zoom <= 0}
+        >
+          -
+        </button>
+      </div>
+    </MapContext.Provider>
+  )
+};
 
 export default Map;
