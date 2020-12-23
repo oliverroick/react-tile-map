@@ -10,11 +10,7 @@ const Layer: FunctionComponent<Props> = ({
   serviceUrl
 }) => {
   const { zoom, width, center, height } = useContext(MapContext);
-  const [ lon, lat ] = center;
-
-  const worldSize = 256 * Math.pow(2, zoom);
-  const mercatorX = worldSize * (lon / 360 + 0.5)
-  const mercatorY = worldSize * (1 - Math.log(Math.tan(Math.PI * (0.25 + lat / 360))) / Math.PI) / 2
+  const [ mercatorX, mercatorY ] = center;
 
   const offsetX = Math.floor(mercatorX - width / 2);
   const offsetY = Math.floor(mercatorY - height / 2);

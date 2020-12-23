@@ -22,24 +22,60 @@ export const MapContext = createContext<MapContextType>({
   height: 0,
 });
 
+const lonLatToPx: (center: [number, number], zoom: number) => [number, number] = ([lon, lat], zoom) => {
+  const worldSize = 256 * Math.pow(2, zoom);
+  const x = worldSize * (lon / 360 + 0.5);
+  const y = worldSize * (1 - Math.log(Math.tan(Math.PI * (0.25 + lat / 360))) / Math.PI) / 2;
+  return [x, y];
+}
+
+const pxToLonLat: (center: [number, number], zoom: number) => [number, number] = ([x, y], zoom) => {
+  const worldSize = 256 * Math.pow(2, zoom);
+  const lon = (x / worldSize - 0.5) * 360;
+  const lat = ((Math.atan(Math.exp(-1 * (((y * 2 / worldSize) - 1) * Math.PI))) / Math.PI) - 0.25) * 360;
+  return [lon, lat];
+}
+
 const Map: FunctionComponent<Props> = ({
-  center = [0, 0],
+  center: initialCenter = [0, 0],
   zoom: initialZoom,
   width,
   height,
   children,
 }) => {
-  const [zoom, setZoom] = useState(initialZoom);
+  const [zoom, setZoom] = useState<number>(initialZoom);
+  const [center, setCenter] = useState<[number, number]>(initialCenter);
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+
+  const centerPx = lonLatToPx(center, zoom);
 
   useEffect(() => {
     setZoom(initialZoom);
   }, [initialZoom]);
 
+  useEffect(() => {
+    setCenter(initialCenter);
+  }, [initialCenter]);
+
   const handleZoom = (dir: number) => setZoom(dir + zoom);
+  const toggleDrag = () => setIsDragging(!isDragging);
+  const handleDrag = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    if (isDragging) {
+      const [x, y] = centerPx;
+      const {movementX, movementY} = e;
+      setCenter(pxToLonLat([x - movementX, y - movementY], zoom));
+    }
+  }
 
   return (
-    <MapContext.Provider value={{ center, zoom, height, width }}>
-      <div id="map" style={{ width, height, position: 'relative', overflow: 'hidden', border: '3px solid black'}}>
+    <MapContext.Provider value={{ center: centerPx, zoom, height, width }}>
+      <div
+        id="map"
+        style={{ width, height, position: 'relative', overflow: 'hidden', border: '3px solid black'}}
+        onMouseDown={toggleDrag}
+        onMouseUp={toggleDrag}
+        onMouseMove={handleDrag}
+      >
         { children }
       </div>
       <div>
