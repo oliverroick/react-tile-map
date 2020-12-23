@@ -66,6 +66,7 @@ const Map: FunctionComponent<Props> = ({
       setCenter(pxToLonLat([x - movementX, y - movementY], zoom));
     }
   }
+  const handleScroll = (e: React.WheelEvent<HTMLDivElement>) => setZoom(zoom - e.deltaY);
 
   return (
     <MapContext.Provider value={{ center: centerPx, zoom, height, width }}>
@@ -75,6 +76,7 @@ const Map: FunctionComponent<Props> = ({
         onMouseDown={toggleDrag}
         onMouseUp={toggleDrag}
         onMouseMove={handleDrag}
+        onWheel={handleScroll}
       >
         { children }
       </div>
