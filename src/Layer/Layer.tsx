@@ -4,10 +4,12 @@ import Tile from './Tile';
 
 interface Props {
   serviceUrl: string;
+  copyrightInfo?: React.ReactNode;
 }
 
 const Layer: FunctionComponent<Props> = ({
-  serviceUrl
+  serviceUrl,
+  copyrightInfo,
 }) => {
   const { zoom, width, center, height } = useContext(MapContext);
   const [ mercatorX, mercatorY ] = center;
@@ -41,6 +43,7 @@ const Layer: FunctionComponent<Props> = ({
         <Tile key={`${top},${left}`} left={left} top={top} imageUrl={url} />
       )
     )}
+    {copyrightInfo && <div style={{ position: 'absolute', bottom: 0, right: 0, backgroundColor: 'white'}}>{ copyrightInfo }</div>}
     </>
   );
 };

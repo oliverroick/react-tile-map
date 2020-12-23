@@ -8,7 +8,10 @@ import reportWebVitals from './reportWebVitals';
 ReactDOM.render(
   <React.StrictMode>
     <Map center={[12.068073749542236, 50.86839168405565]} zoom={16} width={1000} height={500}>
-      <Layer serviceUrl="http://a.tile.osm.org/{z}/{x}/{y}.png" />
+      <Layer
+        serviceUrl="http://a.tile.osm.org/{z}/{x}/{y}.png"
+        copyrightInfo={<>&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors</>}
+      />
     </Map>
   </React.StrictMode>,
   document.getElementById('root')
