@@ -1,2 +1,2 @@
-# react-slippy-map
+# react-tile-map
 A ridiculous side project. 
